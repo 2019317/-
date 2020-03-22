@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Layout, Menu, Breadcrumb } from 'antd';
+import { Layout, Menu } from 'antd';
 import { withRouter } from 'react-router-dom'
 
 import logo from './logo.png'
