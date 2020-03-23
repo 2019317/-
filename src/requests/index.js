@@ -30,3 +30,12 @@ export const getAtricle = (offset, limited) => {
 export const deleteAtricle = (id) => {
     return servies.delete('api/fw/delete',{id})
 }
+
+export const editAtricle = (id) => {
+    return servies.post('api/fw/edit')
+}
+
+export const editOkAtricle = (data) => {
+    console.log(data)
+    return servies.post('api/fw/editOk',data)
+}

@@ -13,7 +13,6 @@ return class LoadableComponent extends Component {
         // import('./Dashboard')
         loader()
             .then( resp => {
-                console.log(resp)
                 this.setState({
                     LoadedComponnet: resp.default
                 })

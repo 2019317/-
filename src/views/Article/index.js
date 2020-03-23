@@ -120,7 +120,7 @@ export default class Article extends Component {
     }
     editAtricle = (record) => {
         this.props.history.push({
-            pathname:`/admin/article/edit/${record.id}` 
+            pathname:`/admin/article/edit/${record.id}`
         })
     }
     

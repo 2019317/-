@@ -1,24 +1,41 @@
 import React, { Component,createRef } from 'react'
-import { Button, Card,Form, Input, DatePicker } from 'antd'
+import { Button, Card,Form, Input, DatePicker, Spin } from 'antd'
 import E from 'wangeditor'
-
-
+import { editAtricle, editOkAtricle } from '../../requests'
+import  moment  from 'moment'
 import './Edit.less'
 
 export default class Edit extends Component {
-    formRef = createRef();
+    
     constructor () {
         super()
         this.editorRef = createRef()
+        this.formRef = createRef();
+        this.state={
+            loading :false
+        }
     }
     dontSetEdit = () => {
-        console.log(this.props)
+        this.props.history.goBack()
     }
     submitAtricle = (value) => {
-        console.log(value)
+        this.setState({
+            loading: true
+        })
+        const data = Object.assign({}, value,{
+            createAt: value.createAt._i
+        })
+        editOkAtricle(data)
+            .then(() => {
+                // this.props.history.push('/admin/article/')
+            })
+            .finally(() => {
+                this.setState({
+                    loading: false
+                })
+            })
     }
     initEditor = () => {
-        // const [form] = Form.useForm()
         this.editor = new E(this.editorRef.current)
         this.editor.customConfig.onchange =  (html) => {
             console.log(this.formRef)
@@ -30,6 +47,23 @@ export default class Edit extends Component {
     }
     componentDidMount (){
         this.initEditor()
+        this.setState({
+            loading: true
+        })
+        editAtricle()
+        // 需要编辑的文章id在this.props.match.params中获取
+            .then((resp) => {
+                const { id, ...data} = resp.data
+                console.log()
+                data.createAt = moment(data.createAt)
+                this.formRef.current.setFieldsValue(data)
+                this.editor.txt.html(data.content)
+            })
+            .finally(() => {
+                this.setState({
+                    loading: false
+                })
+            })
     }
     render() {
         // const {setFieldDecorator} = this.props.form
@@ -47,7 +81,8 @@ export default class Edit extends Component {
                     bordered={false} 
                     extra={<Button onClick={this.dontSetEdit}>取消</Button>}
                 >
-                    <Form
+                    <Spin spinning={this.state.loading}>
+                       <Form
                         ref={this.formRef}
                         {...layout}
                         name="basic"
@@ -56,14 +91,14 @@ export default class Edit extends Component {
                     >
                         <Form.Item
                             label="标题"
-                            name="username"
+                            name="title"
                             rules={[{ required: true, message: '这是必选项' }]}
                         >
                             <Input />
                         </Form.Item>
                         <Form.Item
                             label="作者"
-                            name="auther"
+                            name="author"
                             rules={[{ required: true, message: '这是必选项' }]}
                         >
                             <Input />
@@ -77,7 +112,7 @@ export default class Edit extends Component {
                         </Form.Item>
                         <Form.Item
                             label="更改时间"
-                            name="creatAt"
+                            name="createAt"
                             rules={[{ required: true, message: '这是必选项' }]}
                         >
                             <DatePicker showTime/>
@@ -95,6 +130,7 @@ export default class Edit extends Component {
                             </Button>
                         </Form.Item>
                     </Form>
+                    </Spin>                
                 </Card>
             </div>
         )
